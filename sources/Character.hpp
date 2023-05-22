@@ -8,6 +8,7 @@ namespace ariel{
             ariel::Point position; // represents the position of the character
             int healthPoints; // represents the health points of the character
             std::string name; // represents the name of the character
+            bool isMemberOfTeam; // represents if the character is a member of a team
         public:
             Character(const std::string&, const ariel::Point&, int); // constructor
             virtual ~Character() = default; // destructor
@@ -19,6 +20,10 @@ namespace ariel{
             virtual std::string print() const = 0; // prints the character
             int getHealthPoints() const; // returns the health points of the character for testing purposes
             std::string getcharacterName() const; // returns the name of the character for testing purposes
+            bool IsMemberOfTeam() const; // returns True if the character is a member of a team, False otherwise
+            void setMemberOfTeam(); // set the isMemberOfTeam field to the given value
+
+
 
             // for tidy
             Character(const Character&) = default; // copy constructor

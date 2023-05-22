@@ -15,6 +15,6 @@ namespace ariel{
             double getX() const; // returns the x coordinate
             double getY() const; // returns the y coordinate
             std::string print() const; // prints the point with the format (x,y)
-            friend Point moveTowards(const Point&, const Point&, double); // returns the point that is closer to the destination point by the given distance from the source point  
+            static Point moveTowards(const Point&, const Point&, double); // returns the point that is closer to the destination point by the given distance from the source point  
     };  
 }

@@ -32,17 +32,20 @@ double ariel::Point::getY() const{
 std::string ariel::Point::print() const{
     return "(" + std::to_string(this->x) + "," + std::to_string(this->y) + ")";
 }
-ariel::Point ariel::moveTowards(const ariel::Point& source, const ariel::Point& destination, double distance){
-    double d = source.distance(destination);
-    ariel::Point p = ariel::Point(0,0);
-    if (d <= distance){
-        p.x = destination.getX();
-        p.y = destination.getY();
-        return p;
+ariel::Point ariel::Point::moveTowards(const ariel::Point& source, const ariel::Point& destination, double distance){
+    if (distance < 0){
+        throw std::invalid_argument("distance can't be negative");
     }
-    double x = source.getX() + (distance * (destination.getX() - source.getX()) / d);
-    double y = source.getY() + (distance * (destination.getY() - source.getY()) / d);
-    p.x = x;
-    p.y = y;
+    double d = source.distance(destination);
+    double x,y;
+    if (d <= distance){
+        x = destination.getX();
+        y = destination.getY();
+    }
+    else{
+        x = source.getX() + (distance * (destination.getX() - source.getX()) / d);
+        y = source.getY() + (distance * (destination.getY() - source.getY()) / d);
+    }
+    ariel::Point p = ariel::Point(x,y);
     return p;
 }

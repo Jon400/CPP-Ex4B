@@ -2,6 +2,7 @@
 
 ariel::Character::Character(const std::string& name, const ariel::Point& position, int healthPoints):
     name{name}, position{position}, healthPoints{healthPoints} { 
+        this->isMemberOfTeam = false;
 }
 bool ariel::Character::isAlive() const{
     return this->healthPoints > 0;
@@ -10,6 +11,10 @@ double ariel::Character::distance(const Character* other) const{
     return this->getLocation().distance(other->getLocation());
 }
 void ariel::Character::hit(int damage){
+    // damage can't be negative
+    if (damage < 0){
+        throw std::invalid_argument("damage cannot be negative");
+    }
     this->healthPoints -= damage;
     if (this->healthPoints < 0)  //The health points can't be negative
     {
@@ -27,10 +32,20 @@ ariel::Ninja::Ninja(const std::string& name, const ariel::Point& position, int h
     this->velocity = velocity;
 }
 void ariel::Ninja::move(const Character * other){
-    this->position = moveTowards(this->position, other->getLocation(), this->velocity);
+    this->position = Point::moveTowards(this->position, other->getLocation(), this->velocity);
 }
 void ariel::Ninja::slash(Character * other){
-    other->hit(40);
+    // no self harm checking
+    if (this == other){
+        throw std::runtime_error("Ninja cannot slash himself");
+    }
+    if (!this->isAlive() || !other->isAlive()){
+        throw std::runtime_error("characters cannot attack a dead enemy");
+    }
+    if (this->getLocation().distance(other->getLocation()) < 1)
+    {
+        other->hit(40);
+    }
     return;
 }
 std::string ariel::Ninja::print() const{
@@ -46,7 +61,14 @@ ariel::Cowboy::Cowboy(const std::string& name, const ariel::Point& position) : C
     this->numOfBullets = 6;
 }
 void ariel::Cowboy::shoot(Character * other){
-    if (this->hasboolets() && this->isAlive())
+    // no self harm checking
+    if (this == other){
+        throw std::runtime_error("Cowboy cannot shoot himself");
+    }
+    if (!this->isAlive() || !other->isAlive()){
+        throw std::runtime_error("characters cannot attack a dead enemy, dead cowboys cannot shoot");
+    }
+    if (this->hasboolets())
     {
         other->hit(10);
         this->numOfBullets--;
@@ -54,6 +76,9 @@ void ariel::Cowboy::shoot(Character * other){
     return;
 }
 void ariel::Cowboy::reload(){
+    if (!this->isAlive()){
+        throw std::runtime_error("dead cowboys cannot reload");
+    }
     this->numOfBullets = 6;
     return;
 }
@@ -69,4 +94,10 @@ int ariel::Character::getHealthPoints() const{
 }
 std::string ariel::Character::getcharacterName() const{
     return std::string();
+}
+bool ariel::Character::IsMemberOfTeam() const{
+    return this->isMemberOfTeam;
+}
+void ariel::Character::setMemberOfTeam(){
+    this->isMemberOfTeam = true;
 }
