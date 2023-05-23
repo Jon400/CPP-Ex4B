@@ -1,4 +1,9 @@
 #include "Character.hpp"
+#include "Ninja.hpp"
+#include "TrainedNinja.hpp"
+#include "YoungNinja.hpp"
+#include "OldNinja.hpp"
+#include "Cowboy.hpp"
 
 ariel::Character::Character(const std::string& name, const ariel::Point& position, int healthPoints):
     name{name}, position{position}, healthPoints{healthPoints} { 

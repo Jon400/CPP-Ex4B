@@ -1,5 +1,10 @@
 #pragma once
 #include "Character.hpp"
+#include "Cowboy.hpp"
+#include "Ninja.hpp"
+#include "TrainedNinja.hpp"
+#include "YoungNinja.hpp"
+#include "OldNinja.hpp"
 #include <vector>
 
 namespace ariel{
@@ -45,31 +50,5 @@ namespace ariel{
             Team& operator=(const Team&) = delete; // assignment operator
             Team(Team&&) = delete; // move constructor
             Team& operator=(Team&&) = delete; // move assignment operator
-    };
-
-    class Team2: public Team{
-        public:
-            class derivedIterator: public Team::Iterator{
-                public:
-                    derivedIterator(std::vector<ariel::Character*>, size_t); // constructor
-                    Iterator& operator++() override; // prefix increment operator
-            };
-            Team2(ariel::Character*); // constructor, receves a pointer to the head character of the team
-            Iterator* begin() const override; // returns an iterator to the first character in the team
-            Iterator* end() const override; // returns an iterator to the last character in the team
-    };
-    
-    class SmartTeam: public Team{
-        public:
-            class smartIterator: public Team::Iterator{
-                private:
-                    std::vector<ariel::Character*> other_members;
-                public:
-                    smartIterator(std::vector<ariel::Character*>, std::vector<ariel::Character*>, size_t); // constructor
-                    Iterator& operator++() override; // prefix increment operator
-            };
-            SmartTeam(ariel::Character*); // constructor, receves a pointer to the head character of the team
-            Iterator* begin() const override; // returns an iterator to the first character in the team
-            Iterator* end() const override; // returns an iterator to the last character in the team
     };
 }

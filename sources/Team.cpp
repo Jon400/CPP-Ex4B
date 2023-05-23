@@ -1,4 +1,6 @@
 #include "Team.hpp"
+#include "Team2.hpp"
+#include "SmartTeam.hpp"
 #include <limits>
 
 ariel::Team::Team(ariel::Character* head){
