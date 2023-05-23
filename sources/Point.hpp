@@ -10,6 +10,9 @@ namespace ariel{
             Point(double, double); // constructor that receives x and y coordinates
             Point(const Point&); // copy constructor
             Point& operator=(const Point&); // assignment operator
+            // for tidy
+            Point(Point&&) = default; // move constructor
+            Point& operator=(Point&&) = default; // move assignment operator
             ~Point(); // destructor
             double distance(const Point&) const; // returns the euclidean distance between two points
             double getX() const; // returns the x coordinate

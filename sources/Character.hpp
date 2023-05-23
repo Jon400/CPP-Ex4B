@@ -4,11 +4,14 @@
 
 namespace ariel{
     class Character{
-        protected:
+        private:
             ariel::Point position; // represents the position of the character
             int healthPoints; // represents the health points of the character
             std::string name; // represents the name of the character
             bool isMemberOfTeam; // represents if the character is a member of a team
+        protected:
+            void setPosition(const ariel::Point&); // set the position of the character
+            void setHealthPoints(int); // set the health points of the character
         public:
             Character(const std::string&, const ariel::Point&, int); // constructor
             virtual ~Character() = default; // destructor
@@ -33,8 +36,11 @@ namespace ariel{
     };
 
      class Ninja: public Character{
-        protected:
+        private:
             int velocity; // represents the velocity of the ninja
+        protected:
+            void setVelocity(int); // set the velocity of the ninja
+            int getVelocity() const; // returns the velocity of the ninja
         public:
             Ninja(const std::string&, const ariel::Point&, int, int); // constructor
             void move(const Character*); // cause the ninja to move towards the other character

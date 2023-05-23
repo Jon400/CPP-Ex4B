@@ -29,10 +29,10 @@ ariel::Point ariel::Character::getLocation() const{
     return this->position;
 }
 ariel::Ninja::Ninja(const std::string& name, const ariel::Point& position, int healthPoints, int velocity) : Character(name, position, healthPoints){
-    this->velocity = velocity;
+    this->setVelocity(velocity);
 }
 void ariel::Ninja::move(const Character * other){
-    this->position = Point::moveTowards(this->position, other->getLocation(), this->velocity);
+    this->setPosition(Point::moveTowards(this->getLocation(), other->getLocation(), this->getVelocity()));
 }
 void ariel::Ninja::slash(Character * other){
     // no self harm checking
@@ -49,7 +49,13 @@ void ariel::Ninja::slash(Character * other){
     return;
 }
 std::string ariel::Ninja::print() const{
-    return "N" + this->getName() + " " + this->getLocation().print() + " " + (this->isAlive()? std::to_string(this->healthPoints) : "") + "\n";
+    return "N" + this->getName() + " " + this->getLocation().print() + " " + (this->isAlive()? std::to_string(this->getHealthPoints()) : "") + "\n";
+}
+void ariel::Ninja::setVelocity(int velocity){
+    this->velocity = velocity;
+}
+int ariel::Ninja::getVelocity() const{
+    return this->velocity;
 }
 ariel::YoungNinja::YoungNinja(const std::string& name, const ariel::Point& position) : Ninja(name, position, 100, 14){
 }
@@ -87,7 +93,7 @@ bool ariel::Cowboy::hasboolets() const{
 }
 std::string ariel::Cowboy::print() const{
     return "C" + this->getName() + " " + this->getLocation().print() + " " 
-    + (this->isAlive()? std::to_string(this->healthPoints) : "") + "\n";
+    + (this->isAlive()? std::to_string(this->getHealthPoints()) : "") + "\n";
 }
 int ariel::Character::getHealthPoints() const{
     return 0;
@@ -100,4 +106,11 @@ bool ariel::Character::IsMemberOfTeam() const{
 }
 void ariel::Character::setMemberOfTeam(){
     this->isMemberOfTeam = true;
+}
+// for tidy reasons
+void ariel::Character::setPosition(const Point& position){
+    this->position = position;
+}
+void ariel::Character::setHealthPoints(int healthPoints){
+    this->healthPoints = healthPoints;
 }
