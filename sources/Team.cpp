@@ -55,8 +55,8 @@ void ariel::Team::attack(Team* other){
             }
             ++(*it);
         }
-        free(it);
-        free(it_end);
+        delete it;
+        delete it_end;
         // for (size_t i = 0; i < this->members.size(); i++){
         //     if (this->members[i]->isAlive()){
         //         int tmp = this->members[i]->distance(this->leader);
@@ -128,6 +128,8 @@ void ariel::Team::attack(Team* other){
         }
         // check if one of the teams is dead, if so, stop the attack
         if (this->stillAlive() == 0 || other->stillAlive() == 0){
+            delete it;
+            delete it_end;
             return;
         }       
         // check if the victim is dead, if so, choose a new victim that is closest to the leader of the attacking team
@@ -158,16 +160,20 @@ void ariel::Team::attack(Team* other){
             }
             // if there is no victim, stop the attack
             if (victim == nullptr){
+                delete it;
+                delete it_end;
                 return;
             }
         }
         if ((*it) == (*it_end)){
+            delete it;
+            delete it_end;
             return;
         }
         ++(*it);
     }
-    free(it);
-    free(it_end);
+    delete it;
+    delete it_end;
 }
 int ariel::Team::stillAlive() const{
     int count = 0;
