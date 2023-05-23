@@ -42,8 +42,8 @@ void ariel::Team::attack(Team* other){
     if (!this->leader->isAlive()){// check if the leader is alive, if not, choose a new leader that is closest to the dead leader
         double min = std::numeric_limits<double>::max();
         Character* newLeader = nullptr;
-        Iterator* it = this->begin();
-        Iterator* it_end = this->end();
+        Iterator* it = this->begin(other->members);
+        Iterator* it_end = this->end(other->members);
         while (true){
             if ((*(*it))->isAlive()){
                 double tmp = (*(*it))->distance(this->leader);
@@ -103,8 +103,8 @@ void ariel::Team::attack(Team* other){
         return;
     }
     // attack the victim
-    Iterator* it = this->begin();
-    Iterator* it_end = this->end();
+    Iterator* it = this->begin(other->members);
+    Iterator* it_end = this->end(other->members);
     while (true){
         Cowboy* tmp_cowboy = nullptr;
         Ninja* tmp_ninja = nullptr;
@@ -188,8 +188,8 @@ int ariel::Team::stillAlive() const{
 }
 void ariel::Team::print() const{
     std::cout << "Team Leader: " << this->leader->print() << std::endl;
-    Iterator* it = this->begin();
-    Iterator* it_end = this->end();
+    Iterator* it = this->begin(this->members);
+    Iterator* it_end = this->end(this->members);
     while (true){
         std::cout << "Character: " << (*(*it))->print() << std::endl;
         if ((*it) == (*it_end)){
@@ -275,7 +275,7 @@ size_t ariel::Team::Iterator::getIndex() const{
 void ariel::Team::Iterator::setIndex(size_t index){
     this->index = index;
 }
-ariel::Team::Iterator* ariel::Team::begin() const{// begin with the first alive cowboy, if there is no alive cowboy, begin with the first alive Ninja
+ariel::Team::Iterator* ariel::Team::begin(std::vector<Character*> other_members) const{// begin with the first alive cowboy, if there is no alive cowboy, begin with the first alive Ninja
     Cowboy* tmp_cowboy = nullptr;
     for (size_t i = 0; i < this->members.size(); i++){
         if ((tmp_cowboy = dynamic_cast<Cowboy*>(this->members[i]))){
@@ -288,7 +288,7 @@ ariel::Team::Iterator* ariel::Team::begin() const{// begin with the first alive 
     }
     throw std::runtime_error("No alive characters");
 }
-ariel::Team::Iterator* ariel::Team::end() const{// end with the last alive ninja, if there is no alive cowboy, end with the last alive cowboy
+ariel::Team::Iterator* ariel::Team::end(std::vector<Character*> other_members) const{// end with the last alive ninja, if there is no alive cowboy, end with the last alive cowboy
     Ninja* tmp_ninja = nullptr;
     for (size_t i = this->members.size(); i > 0; i--){
         if ((tmp_ninja = dynamic_cast<Ninja*>(this->members[i-1]))){
@@ -307,26 +307,90 @@ ariel::Character* ariel::Team::getLeader() const{
     return this->leader;
 }
 ariel::Team2::Team2(ariel::Character* head): Team(head){}
-ariel::Team::Iterator* ariel::Team2::begin() const{// will return an iterator of the first character in the team in the order insertion in the vector
+ariel::Team::Iterator* ariel::Team2::begin(std::vector<Character*> other_members) const{// will return an iterator of the first character in the team in the order insertion in the vector
     return new derivedIterator(this->getMembers(), 0);
 }
-ariel::Team::Iterator* ariel::Team2::end() const{
+ariel::Team::Iterator* ariel::Team2::end(std::vector<Character*> other_members) const{
     return new derivedIterator(this->getMembers(), this->getMembers().size()-1);
 }
 ariel::SmartTeam::SmartTeam(ariel::Character* head): Team(head){}
-ariel::Team::Iterator* ariel::SmartTeam::begin() const{
-    return new smartIterator(this->getMembers(), std::vector<Character*>(), 0);
+ariel::Team::Iterator* ariel::SmartTeam::begin(std::vector<Character*> other_members) const{// start with the person who his distance cost from the other team is the lowest
+    std::vector<Point> other_points;
+    for (size_t i = 0; i < other_members.size(); i++)
+    {
+        other_points.push_back(other_members[i]->getLocation());
+    }
+
+    double min = std::numeric_limits<double>::max();
+    size_t index = 0;
+    for (size_t i = 0; i < this->getMembers().size(); i++)
+    {
+        double tmp = 0;
+        for (size_t j = 0; j < other_points.size(); j++)
+        {
+            if (other_members[j]->isAlive()){
+                tmp += this->getMembers()[i]->getLocation().distance(other_points[j]);
+            }
+        }
+        if (tmp < min){
+            min = tmp;
+            index= i;
+        }
+    }
+    return new smartIterator(this->getMembers(), other_points, index);
 }
-ariel::Team::Iterator* ariel::SmartTeam::end() const{
-    return new Iterator(std::vector<ariel::Character*>(), 0);
+ariel::Team::Iterator* ariel::SmartTeam::end(std::vector<Character*> other_members) const{
+    std::vector<Point> other_points;
+    for (size_t i = 0; i < other_members.size(); i++){
+        other_points.push_back(other_members[i]->getLocation());
+    }
+    double max = std::numeric_limits<double>::min();
+    size_t index = 0;
+    for (size_t i = 0; i < this->getMembers().size(); i++)
+    {
+        double tmp = 0;
+        for (size_t j = 0; j < other_points.size(); j++){
+            if (other_members[j]->isAlive()){
+                tmp += this->getMembers()[i]->getLocation().distance(other_points[j]);
+            }
+        }
+        if (tmp > max){
+            max = tmp;
+            index= i;
+        }
+    }
+    return new smartIterator(this->getMembers(), other_points, index);
 }
 ariel::Team2::derivedIterator::derivedIterator(std::vector<ariel::Character*> members, size_t index): Iterator(members, index){}
 ariel::Team::Iterator& ariel::Team2::derivedIterator::operator++(){
     this->setIndex(this->getIndex()+1);
     return *this;
 }
-ariel::SmartTeam::smartIterator::smartIterator(std::vector<ariel::Character*> members, std::vector<ariel::Character*> other_members,
+ariel::SmartTeam::smartIterator::smartIterator(std::vector<ariel::Character*> members, std::vector<Point> other_points,
     size_t index): Iterator(members, index){
-        this->other_members = other_members;
+        this->other_members_points = other_points;
 }
-ariel::Team::Iterator& ariel::SmartTeam::smartIterator::operator++(){return *this;}
+ariel::Team::Iterator& ariel::SmartTeam::smartIterator::operator++(){
+    // calculate the cost distance of the current character
+    double sum = 0;
+    for (size_t i = 0; i < this->other_members_points.size(); i++)
+    {
+        sum += this->getMembers()[this->getIndex()]->getLocation().distance(this->other_members_points[i]);
+    }
+    double min = std::numeric_limits<double>::max();
+    for (size_t i = 0; i < this->getMembers().size(); i++)
+    {
+        double tmp = 0;
+        for (size_t j = 0; j < this->other_members_points.size(); j++){
+            tmp += this->getMembers()[i]->getLocation().distance(this->other_members_points[j]);
+        }
+        if (tmp < min && tmp > sum){
+            min = tmp;
+            this->setIndex(i);
+        }
+    }
+    return *this;
+}
+std::vector<ariel::Character*> ariel::Team::Iterator::getMembers() const{
+    return this->members;
+}

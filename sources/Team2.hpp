@@ -11,7 +11,7 @@ namespace ariel
                     Iterator& operator++() override; // prefix increment operator
             };
             Team2(ariel::Character*); // constructor, receves a pointer to the head character of the team
-            Iterator* begin() const override; // returns an iterator to the first character in the team
-            Iterator* end() const override; // returns an iterator to the last character in the team
+            Iterator* begin(std::vector<Character*>) const override; // returns an iterator to the first character in the team
+            Iterator* end(std::vector<Character*>) const override; // returns an iterator to the last character in the team
     };
 }

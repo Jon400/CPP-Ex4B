@@ -24,6 +24,7 @@ namespace ariel{
                 protected:
                     size_t getIndex() const; // returns the index of the iterator
                     void setIndex(size_t); // set the index of the iterator
+                    std::vector<ariel::Character*> getMembers() const; // returns the members of the team
                 public:
                     Iterator(std::vector<ariel::Character*>, size_t); // constructor
                     virtual Iterator& operator++(); // prefix increment operator
@@ -43,8 +44,8 @@ namespace ariel{
             void attack(Team*); // receive a pointer to other team and attack the other team
             int stillAlive() const; // returns the number of alive characters in the team
             void print() const; // prints the characters in the team
-            virtual Iterator* begin() const; // returns an iterator to the first character in the team
-            virtual Iterator* end() const; // returns an iterator to the last character in the team
+            virtual Iterator* begin(std::vector<Character*>) const; // returns an iterator to the first character in the team
+            virtual Iterator* end(std::vector<Character*>) const; // returns an iterator to the last character in the team
             // for tidy
             Team(const Team&) = delete; // copy constructor
             Team& operator=(const Team&) = delete; // assignment operator
