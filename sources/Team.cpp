@@ -186,9 +186,23 @@ int ariel::Team::stillAlive() const{
 }
 void ariel::Team::print() const{
     std::cout << "Team Leader: " << this->leader->print() << std::endl;
-    for (size_t i = 0; i < members.size(); i++){
-        std::cout << "Character: " << members[i]->print() << std::endl;
+    Iterator* it = this->begin();
+    Iterator* it_end = this->end();
+    while (true){
+        std::cout << "Character: " << (*(*it))->print() << std::endl;
+        if ((*it) == (*it_end)){
+            break;
+        }
+        if ((*it) == (*it_end)){
+            break;
+        }
+        ++(*it);   
     }
+    delete it;
+    delete it_end;
+    // for (size_t i = 0; i < members.size(); i++){
+    //     std::cout << "Character: " << members[i]->print() << std::endl;
+    // }
 }
 ariel::Team::Iterator::Iterator(std::vector<ariel::Character*> members, size_t index){
     this->members = members;

@@ -96,7 +96,7 @@ std::string ariel::Cowboy::print() const{
     + (this->isAlive()? std::to_string(this->getHealthPoints()) : "") + "\n";
 }
 int ariel::Character::getHealthPoints() const{
-    return 0;
+    return this->healthPoints;
 }
 std::string ariel::Character::getcharacterName() const{
     return std::string();
